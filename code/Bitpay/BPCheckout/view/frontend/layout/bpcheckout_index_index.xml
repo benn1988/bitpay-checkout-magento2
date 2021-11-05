@@ -3,7 +3,7 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Bitpay\BPCheckout\Block\Index" name="bpcheckout_index_index" template="Bitpay_BPCheckout::index.phtml" />
+            <block name="bpcheckout_index_index" template="Bitpay_BPCheckout::index.phtml" />
         </referenceContainer>
     </body>
 </page>
