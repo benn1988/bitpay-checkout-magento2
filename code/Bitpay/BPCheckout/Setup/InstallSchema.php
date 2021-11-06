@@ -1,10 +1,16 @@
 <?php
+
 namespace Bitpay\BPCheckout\Setup;
 
 class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 {
-    public function install(\Magento\Framework\Setup\SchemaSetupInterface $setup, \Magento\Framework\Setup\ModuleContextInterface $context)
-    {
+    /**
+     * @throws \Zend_Db_Exception
+     */
+    public function install(
+        \Magento\Framework\Setup\SchemaSetupInterface $setup,
+        \Magento\Framework\Setup\ModuleContextInterface $context
+    ) {
         $installer = $setup;
         $installer->startSetup();
        
