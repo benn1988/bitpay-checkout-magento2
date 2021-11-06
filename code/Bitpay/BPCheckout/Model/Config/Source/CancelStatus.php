@@ -5,7 +5,7 @@ namespace Bitpay\BPCheckout\Model\Config\Source;
 use Magento\Framework\Data\OptionSourceInterface;
 
 /**
- * Refund Status Model
+ * Cancel Status Model
  */
 class CancelStatus implements OptionSourceInterface
 {
