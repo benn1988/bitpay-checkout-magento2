@@ -7,7 +7,7 @@ use Magento\Framework\Data\OptionSourceInterface;
 /**
  * Refund Status Model
  */
-class Refundstatus implements OptionSourceInterface
+class RefundStatus implements OptionSourceInterface
 {
     /**
      * @inheritdoc
