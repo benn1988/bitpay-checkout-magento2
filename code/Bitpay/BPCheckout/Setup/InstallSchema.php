@@ -2,14 +2,22 @@
 
 namespace Bitpay\BPCheckout\Setup;
 
-class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
+use Magento\Framework\DB\Ddl\Table;
+use Magento\Framework\Setup\InstallSchemaInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+use Zend_Db_Exception;
+
+class InstallSchema implements InstallSchemaInterface
 {
     /**
-     * @throws \Zend_Db_Exception
+     * @inheritdoc
+     *
+     * @throws Zend_Db_Exception
      */
     public function install(
-        \Magento\Framework\Setup\SchemaSetupInterface $setup,
-        \Magento\Framework\Setup\ModuleContextInterface $context
+        SchemaSetupInterface $setup,
+        ModuleContextInterface $context
     ) {
         $installer = $setup;
         $installer->startSetup();
@@ -19,37 +27,37 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
             $installer->getTable('bitpay_transactions')
         )->addColumn(
             'id',
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['identity' => true, 'nullable' => false, 'primary' => true, 'unsigned' => true],
             'ID'
         )->addColumn(
             'order_id',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             255,
             ['nullable' => false],
             'Order ID'
         )->addColumn(
             'transaction_id',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             255,
             ['nullable' => false],
             'Transaction ID'
         )->addColumn(
-                'transaction_status',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                255,
-                ['nullable' => false],
-                'Transaction Status'
-            )->addColumn(
-            'date_added',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+            'transaction_status',
+            Table::TYPE_TEXT,
             255,
-            ['nullable' => false,'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT_UPDATE],
+            ['nullable' => false],
+            'Transaction Status'
+        )->addColumn(
+            'date_added',
+            Table::TYPE_TIMESTAMP,
+            255,
+            ['nullable' => false,'default' => Table::TIMESTAMP_INIT_UPDATE],
             'Date Added'
         );
         $installer->getConnection()->createTable($table);
-//END   table setup
+        //END   table setup
         $installer->endSetup();
     }
 }
