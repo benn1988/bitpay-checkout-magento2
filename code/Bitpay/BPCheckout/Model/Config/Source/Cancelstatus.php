@@ -1,23 +1,22 @@
 <?php
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
+
 namespace Bitpay\BPCheckout\Model\Config\Source;
 
+use Magento\Framework\Data\OptionSourceInterface;
+
 /**
- *Refund Status Model
+ * Refund Status Model
  */
-class Cancelstatus implements \Magento\Framework\Option\ArrayInterface
+class CancelStatus implements OptionSourceInterface
 {
-
-    public function toOptionArray()
+    /**
+     * @inheritdoc
+     */
+    public function toOptionArray(): array
     {
-
         return [
             ['value' => 'cancel', 'label' => __('True')],
             ['value' => 'ignore', 'label' => __('False')]
         ];
-
     }
 }

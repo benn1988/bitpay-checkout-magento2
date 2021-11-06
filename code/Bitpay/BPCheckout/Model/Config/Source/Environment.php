@@ -1,23 +1,22 @@
 <?php
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
+
 namespace Bitpay\BPCheckout\Model\Config\Source;
 
+use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Environment Model
  */
-class Environment implements \Magento\Framework\Option\ArrayInterface
+class Environment implements OptionSourceInterface
 {
-
-    public function toOptionArray()
+    /**
+     * @inheritdoc
+     */
+    public function toOptionArray(): array
     {
         return [
             'test' => 'Test',
             'prod' => 'Production',
         ];
-
     }
 }

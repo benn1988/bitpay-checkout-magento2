@@ -5,19 +5,21 @@
  */
 namespace Bitpay\BPCheckout\Model\Config\Source;
 
+use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * IPN Model
  */
-class Ipn implements \Magento\Framework\Option\ArrayInterface
+class Ipn implements OptionSourceInterface
 {
-
-    public function toOptionArray()
+    /**
+     * @inheritdoc
+     */
+    public function toOptionArray(): array
     {
         return [
             'pending' => 'Pending',
             'processing' => 'Processing',
         ];
-
     }
 }
