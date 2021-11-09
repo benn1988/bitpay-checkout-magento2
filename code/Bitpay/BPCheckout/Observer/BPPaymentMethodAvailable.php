@@ -2,49 +2,64 @@
  
 namespace Bitpay\BPCheckout\Observer;
  
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
- 
- 
+use Magento\Store\Model\ScopeInterface;
+
+/**
+ * payment_method_is_active event handler.
+ */
 class BPPaymentMethodAvailable implements ObserverInterface
 {
+    const XML_PATH_BITPAY_ENDPOINT = 'payment/bpcheckout/bitpay_endpoint';
+    const XML_PATH_BITPAY_DEVTOKEN = 'payment/bpcheckout/bitpay_devtoken';
+    const XML_PATH_BITPAY_PRODTOKEN = 'payment/bpcheckout/bitpay_prodtoken';
+
     /**
-     * payment_method_is_active event handler.
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
+     * BPPaymentMethodAvailable constructor
      *
-     * @param \Magento\Framework\Event\Observer $observer
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig 
+        ScopeConfigInterface $scopeConfig
     ) {
-       
-        $this->_scopeConfig = $scopeConfig;
-       
-
+        $this->scopeConfig = $scopeConfig;
     }
-    public function getStoreConfig($_env)
-    {
-        $_val = $this->_scopeConfig->getValue(
-            $_env, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        return $_val;
 
+    /**
+     * Retrieve store config value by path
+     *
+     * @param string $path The path through the tree of configuration values, e.g., 'general/store_information/name'
+     * @return mixed
+     */
+    private function getStoreConfig(string $path)
+    {
+        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE);
     }
-    public function execute(\Magento\Framework\Event\Observer $observer)
-    {
 
-        if($observer->getEvent()->getMethodInstance()->getCode()=="bpcheckout"){
-            $env = $this->getStoreConfig('payment/bpcheckout/bitpay_endpoint');
-            $bitpay_token = $this->getStoreConfig('payment/bpcheckout/bitpay_devtoken');
-            if ($env == 'prod'):
-                $bitpay_token = $this->getStoreConfig('payment/bpcheckout/bitpay_prodtoken');
-            endif;
-            if($bitpay_token == ''):
+    /**
+     * @inheritdoc
+     */
+    public function execute(Observer $observer): void
+    {
+        if ($observer->getEvent()->getMethodInstance()->getCode() === 'bpcheckout') {
+            $bitpayEndpoint = $this->getStoreConfig(self::XML_PATH_BITPAY_ENDPOINT);
+
+            $bitpayToken = $bitpayEndpoint === 'prod'
+                ? $this->getStoreConfig(self::XML_PATH_BITPAY_PRODTOKEN)
+                : $this->getStoreConfig(self::XML_PATH_BITPAY_DEVTOKEN);
+
+            if ($bitpayToken === '') {
                 #hide the payment method
                 $checkResult = $observer->getEvent()->getResult();
                 $checkResult->setData('is_available', false); //this is disabling the payment method at checkout page
-            endif;
-
-
-           
+            }
         }
-  
     }
 }
