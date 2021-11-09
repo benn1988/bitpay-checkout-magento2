@@ -1,18 +1,14 @@
 <?php
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
+
 namespace Bitpay\BPCheckout\Model;
 
-
+use Magento\Payment\Model\Method\AbstractMethod;
 
 /**
- * Pay In Store payment method model
+ * Payment method model
  */
-class BPCheckout extends \Magento\Payment\Model\Method\AbstractMethod
+class BPCheckout extends AbstractMethod
 {
-
     /**
      * Payment code
      *
@@ -26,8 +22,4 @@ class BPCheckout extends \Magento\Payment\Model\Method\AbstractMethod
      * @var bool
      */
     protected $_isOffline = true;
-
-
-  
-
 }
