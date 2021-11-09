@@ -1,49 +1,75 @@
 <?php
-namespace Bitpay\BPCheckout\Observer;
-use Magento\Framework\Event\ObserverInterface;
 
+declare(strict_types=1);
+
+namespace Bitpay\BPCheckout\Observer;
+
+use Exception;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\ResourceModel\Order as OrderResource;
+use Psr\Log\LoggerInterface;
+
+/**
+ * sales_order_place_after event handler.
+ */
 class BPEmail implements ObserverInterface
 {
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * @var OrderResource
+     */
+    private $orderResource;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * BPEmail constructor
+     *
+     * @param OrderResource $orderResource
+     * @param LoggerInterface $logger
+     */
+    public function __construct(
+        OrderResource $orderResource,
+        LoggerInterface $logger
+    ) {
+        $this->orderResource = $orderResource;
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param Observer $observer
+     * @throws Exception
+     */
+    public function execute(Observer $observer): void
     {
-    try{
-        $order = $observer->getEvent()->getOrder();
-        $this->_current_order = $order;
-
-        $payment = $order->getPayment()->getMethodInstance()->getCode();
-
-        if($payment == "bpcheckout"){
-            $this->stopNewOrderEmail($order);
+        try {
+            /** @var Order $order */
+            $order = $observer->getEvent()->getOrder();
+            $paymentCode = $order->getPayment()->getMethodInstance()->getCode();
+            if ($paymentCode === 'bpcheckout') {
+                $this->stopNewOrderEmail($order);
+            }
+        } catch (Exception $e) {
+            $this->logger->error($e);
         }
     }
-    catch (\ErrorException $ee){
 
-    }
-    catch (\Exception $ex)
+    /**
+     * @param Order $order
+     * @throws Exception
+     */
+    public function stopNewOrderEmail(Order $order): void
     {
-
-    }
-    catch (\Error $error){
-
-    }
-
-}
-
-public function stopNewOrderEmail(\Magento\Sales\Model\Order $order){
-    $order->setCanSendNewEmailFlag(false);
-    $order->setSendEmail(false);
-    try{
-        $order->save();
-    }
-    catch (\ErrorException $ee){
-
-    }
-    catch (\Exception $ex)
-    {
-
-    }
-    catch (\Error $error){
-
+        $order->setCanSendNewEmailFlag(false);
+        $order->setSendEmail(false);
+        try {
+            $this->orderResource->save($order);
+        } catch (Exception $e) {
+            $this->logger->error($e);
+        }
     }
 }
-} 
